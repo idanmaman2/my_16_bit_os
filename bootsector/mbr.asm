@@ -45,9 +45,6 @@ jmp $
 
 ; STRINGS 
 banner_str db "idan maman's os",13, 10 , 0 
-disk_error_str db "disk error",13,10 , 0 
-disk_ok_str db "disk ok\n" , 0 
-
 ; 512 align and magic 
 times 510-($-$$) db 0 
 dw 0xaa55 

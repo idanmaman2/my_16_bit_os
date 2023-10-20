@@ -23,6 +23,9 @@ BIOS_PRINT_STRING equ 0x13
 
 ; int 0x13 : DISK 
 BIOS_MEM_READ equ 02h
+BIOS_RESET_DISK equ 0x0 
+
+
 
 ; disk settings 
 DRIVE_NUM equ 0 
@@ -30,4 +33,6 @@ TRACK_NUM equ 1
 CYILNDER_NUM equ 3 
 SECTOR_NUM equ 4
 NUM_OF_SECTORS equ 5 
+
+DRIVE_NUM equ 0 
 
