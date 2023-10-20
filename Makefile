@@ -5,7 +5,7 @@ OBJ_DIR = "./objdir"
 BOOTLOADER = "./bootsector"
 KERNEL = "./kernel"
 NAME=idkidc
-HARDDISKDIR="floppy"
+HARDDISKDIR="./filesystem"
 .PHONY : all disk bootloader kernel install-kernel convert
 all : disk bootloader filesystem kernel install-kernel convert 
 
@@ -22,14 +22,18 @@ filesystem :
 kernel : 
 	$(ASSEMBLER) $(KERNEL)/kernel.asm -f bin -o $(OBJ_DIR)/kernel.bin 
 
-install-kernel : 
-	mkdir -p $(HARDDISKDIR)
-	diskutil mount $(BUILD_DIR)/$(NAME).img	$(HARDDISKDIR)
+install-kernel :	
+	mkdir  -p $(HARDDISKDIR)
+	mount $(BUILD_DIR)/$(NAME).img	$(HARDDISKDIR)
+	fatlabel $(BUILD_DIR)/$(NAME).img "IDKIDC"
 	cp 	$(OBJ_DIR)/kernel.bin  $(HARDDISKDIR)/KERNEL.SYS
-	unmount $(BUILD_DIR)/$(NAME).img
+	fatattr +s $(HARDDISKDIR)/KERNEL.SYS
+	mkdir $(HARDDISKDIR)/HOME/
+	umount $(HARDDISKDIR)
+	rm -rf $(HARDDISKDIR)
 
 convert : 
-	$(IMAGE_CONVERT) -f raw -O qcow2 $(OBJ_DIR)/MBR.bin $(BUILD_DIR)/image.qcow2
+	$(IMAGE_CONVERT) -f raw -O qcow2 $(BUILD_DIR)/$(NAME).img $(BUILD_DIR)/image.qcow2
 clean: 
 	rm  $(OBJ_DIR)/*
 	rm $(BUILD_DIR)/*
