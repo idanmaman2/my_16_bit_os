@@ -20,31 +20,28 @@ banner:
     mov si , banner_str
     call print_string 
 
-
-DiskManipulation : 
-    mov ax , (BIOS_MEM_READ << 8 ) + NUM_OF_SECTORS 
-    mov dx , ( TRACK_NUM << 8 ) +  DRIVE_NUM 
-    mov ch , (CYILNDER_NUM << 8) + SECTOR_NUM 
-    mov bx , KERNEL_CS 
-    mov es , bx
-    int 0x13 
-    jnc disk_ok ; if canary is on jump to disk error 
-    disk_error :
-        mov si , disk_error_str
-        call print_string 
-        jmp end 
-    disk_ok : 
-        mov si ,disk_ok_str
-        call print_string 
-        jmp end 
+disk_init:
+    mov ah ,  BIOS_RESET_DISK
+    mov dl , DRIVE_NUM
+    jc disk_init_error 
+    lea si ,[disk_ok_str] 
+    jmp disk_init_exit 
+    disk_init_error :
+        lea si , [disk_error_str] 
+    disk_init_exit:  
+        call print_string
+disk_read : 
+    mov ax , () 
 end :    
-jmp $
+    jmp $
 
 ; INCLUDES  
 %include "./bootsector/string.asm"
 
 ; STRINGS 
-banner_str db "idan maman's os",13, 10 , 0 
+disk_error_str db "disk error",13,10,0 
+disk_ok_str db "disk ok",13,10,0 
+banner_str db "idan maman's os",13,10,0 
 ; 512 align and magic 
 times 510-($-$$) db 0 
 dw 0xaa55 
